@@ -566,7 +566,7 @@ export default function App() {
                     <Send size={18} /> {t.contact.send}
                   </button>
                   <a
-                    href="https://wa.me/yournumber"
+                    href="https://wa.me/+50375910769"
                     target="_blank"
                     className="flex-1 bg-[#25D366] text-white py-3 rounded-lg font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
                   >

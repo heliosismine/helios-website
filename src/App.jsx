@@ -25,317 +25,376 @@ import {
   Monitor,
 } from "lucide-react";
 
-/**
- * translations: Dictionary for English and Spanish content
- */
-const translations = {
-  en: {
-    nav: {
-      brand: "Helios",
-      home: "Overview",
-      services: "Capabilities",
-      contact: "Contact",
-      lang: "ES",
-    },
-    hero: {
-      badge: "System Online",
-      title: "Built for speed.",
-      title2: "Designed for scale.",
-      description:
-        "Helios engineers bespoke software and Notion operating systems. We turn chaos into linear, high-performance architectures.",
-      cta_primary: "Start Building",
-      cta_secondary: "Contact Us",
-    },
-    tech_stack: "Powering modern teams with cutting-edge stack",
-    features: {
-      title: "Engineered to perfection",
-      subtitle:
-        "Software as it should be. Fast, reliable, and beautifully functional.",
-      f1: "Workflow Automation",
-      f1_d: "Eliminate repetitive tasks with custom internal tooling.",
-      f2: "Real-time Sync",
-      f2_d: "Optimized data layers for instant collaboration.",
-      f3: "Security First",
-      f3_d: "Enterprise-grade encryption for your company's data.",
-    },
-    terminal: {
-      title: "helios-cli — -zsh — 80x24",
-      line1: "npm install @helios/core",
-      line2: "✔ Core modules initialized",
-      line3: "✔ SaaS_Architecture loaded",
-      line4: "Waiting for user command...",
-    },
-    services: {
-      title: "The Helios Protocol",
-      subtitle: "Three pillars of modern digital infrastructure.",
-      items: [
-        {
-          id: 1,
-          title: "Notion Systems",
-          desc: "We don't just make templates. We engineer operating systems for your business logic.",
-          tag: "Workflow",
-        },
-        {
-          id: 2,
-          title: "SaaS Engineering",
-          desc: "From zero to IPO. Scalable, multi-tenant architectures built on the edge.",
-          tag: "Scale",
-        },
-        {
-          id: 3,
-          title: "Bespoke Software",
-          desc: "When off-the-shelf isn't enough. Custom tools for unique problems.",
-          tag: "Custom",
-        },
-      ],
-    },
-    contact: {
-      title: "Get in touch",
-      subtitle: "Let's build something extraordinary together.",
-      name: "Name",
-      email: "Email",
-      message: "Message",
-      send: "Send Message",
-      whatsapp: "Chat on WhatsApp",
-    },
-    footer: {
-      rights:
-        "2024 AVA. Helios is my branding and trademark. All rights reserved.",
-    },
+// ─────────────────────────────────────────────
+// Hook: detecta preferencia del sistema (dark/light)
+// ─────────────────────────────────────────────
+const useSystemTheme = () => {
+  const getTheme = () =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+
+  const [tema, setTema] = useState(getTheme);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const manejarCambio = (e) => setTema(e.matches ? "dark" : "light");
+    mediaQuery.addEventListener("change", manejarCambio);
+    return () => mediaQuery.removeEventListener("change", manejarCambio);
+  }, []);
+
+  return tema;
+};
+
+// ─────────────────────────────────────────────
+// Paleta de colores por tema
+// ─────────────────────────────────────────────
+const temas = {
+  dark: {
+    fondo: "#08090A",
+    fondoNav: "rgba(8,9,10,0.80)",
+    fondoTarjeta: "#0F1115",
+    fondoTarjeta2: "#14151A",
+    texto: "text-slate-200",
+    textoBlanco: "text-white",
+    textoMuted: "text-slate-400",
+    textoExtra: "text-slate-500",
+    textoPie: "text-slate-600",
+    borde: "border-white/5",
+    bordeInput: "border-white/10",
+    inputBg: "bg-white/5",
+    navBg: "bg-[#08090A]/80",
+    selection: "selection:bg-blue-500/30",
+    terminalbg: "#0F1115",
+    terminalHeader: "#1C1C1F",
+    terminalTexto: "text-slate-300",
+    badgeBg: "bg-white/5",
+    badgeTexto: "text-blue-300",
+    tagBg: "bg-white/5",
+    tagTexto: "text-slate-500",
+    iconBg: "bg-white/5",
+    divider: "bg-white/10",
+    noise: "opacity-20",
   },
-  es: {
-    nav: {
-      brand: "Helios",
-      home: "Resumen",
-      services: "Capacidades",
-      contact: "Contacto",
-      lang: "EN",
-    },
-    hero: {
-      badge: "Sistema v3.0 En Línea",
-      title: "Hecho para velocidad.",
-      title2: "Diseñado para escalar.",
-      description:
-        "Helios diseña software a medida y sistemas operativos Notion. Transformamos el caos en arquitecturas lineales de alto rendimiento.",
-      cta_primary: "Empezar",
-      cta_secondary: "Contáctanos",
-    },
-    tech_stack: "Impulsando equipos modernos con tecnología de punta",
-    features: {
-      title: "Ingeniería a la perfección",
-      subtitle:
-        "Software como debe ser. Rápido, confiable y hermosamente funcional.",
-      f1: "Automatización de Flujo",
-      f1_d: "Elimina tareas repetitivas con herramientas internas personalizadas.",
-      f2: "Sincronización Real",
-      f2_d: "Capas de datos optimizadas para colaboración instantánea.",
-      f3: "Seguridad Primero",
-      f3_d: "Encriptación de grado empresarial para los datos de tu empresa.",
-    },
-    terminal: {
-      title: "helios-cli — -zsh — 80x24",
-      line1: "npm install @helios/core",
-      line2: "✔ Módulos centrales iniciados",
-      line3: "✔ Arquitectura_SaaS cargada",
-      line4: "Esperando comando del usuario...",
-    },
-    services: {
-      title: "El Protocolo Helios",
-      subtitle: "Tres pilares de la infraestructura digital moderna.",
-      items: [
-        {
-          id: 1,
-          title: "Sistemas Notion",
-          desc: "No hacemos plantillas. Diseñamos sistemas operativos para tu lógica de negocio.",
-          tag: "Flujo",
-        },
-        {
-          id: 2,
-          title: "Ingeniería SaaS",
-          desc: "De cero a IPO. Arquitecturas escalables y multi-inquilino construidas en el edge.",
-          tag: "Escala",
-        },
-        {
-          id: 3,
-          title: "Software a Medida",
-          desc: "Cuando lo comercial no basta. Herramientas personalizadas para problemas únicos.",
-          tag: "Custom",
-        },
-      ],
-    },
-    contact: {
-      title: "Contacto",
-      subtitle: "Construyamos algo extraordinario juntos.",
-      name: "Nombre",
-      email: "Email",
-      message: "Mensaje",
-      send: "Enviar Mensaje",
-      whatsapp: "Hablar por WhatsApp",
-    },
-    footer: {
-      rights:
-        "2024 AVA. Helios is my branding and trademark. Todos los derechos reservados.",
-    },
+  light: {
+    fondo: "#F4F5F7",
+    fondoNav: "rgba(244,245,247,0.85)",
+    fondoTarjeta: "#FFFFFF",
+    fondoTarjeta2: "#FFFFFF",
+    texto: "text-slate-700",
+    textoBlanco: "text-slate-900",
+    textoMuted: "text-slate-500",
+    textoExtra: "text-slate-400",
+    textoPie: "text-slate-400",
+    borde: "border-slate-200",
+    bordeInput: "border-slate-300",
+    inputBg: "bg-slate-100",
+    navBg: "bg-[#F4F5F7]/85",
+    selection: "selection:bg-blue-300/40",
+    terminalbg: "#1E1E2E",
+    terminalHeader: "#2A2A3C",
+    terminalTexto: "text-slate-300",
+    badgeBg: "bg-blue-50",
+    badgeTexto: "text-blue-600",
+    tagBg: "bg-slate-100",
+    tagTexto: "text-slate-400",
+    iconBg: "bg-slate-100",
+    divider: "bg-slate-200",
+    noise: "opacity-0",
   },
 };
 
-const Typewriter = ({ text, delay = 30, onComplete }) => {
-  const [currentText, setCurrentText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
+// ─────────────────────────────────────────────
+// Contenido en Español (El Salvador)
+// ─────────────────────────────────────────────
+const contenido = {
+  nav: {
+    marca: "Helios",
+    inicio: "Inicio",
+    servicios: "Servicios",
+    contacto: "Contacto",
+  },
+  hero: {
+    insignia: "Sistema v3.0 En Línea",
+    titulo: "Hecho para velocidad.",
+    titulo2: "Diseñado para escalar.",
+    descripcion:
+      "Helios diseña software a medida y sistemas operativos en Notion. Transformamos el caos en arquitecturas lineales de alto rendimiento.",
+    cta_principal: "Empezar",
+    cta_secundario: "Contáctanos",
+  },
+  stack: "Impulsando equipos modernos con tecnología de punta",
+  caracteristicas: {
+    titulo: "Ingeniería a la perfección",
+    subtitulo:
+      "Software como debe ser. Rápido, confiable y hermosamente funcional.",
+    f1: "Automatización de Flujos",
+    f1_d: "Elimina tareas repetitivas con herramientas internas personalizadas.",
+    f2: "Sincronización en Tiempo Real",
+    f2_d: "Capas de datos optimizadas para colaboración instantánea.",
+    f3: "Seguridad Primero",
+    f3_d: "Encriptación de grado empresarial para los datos de tu empresa.",
+  },
+  terminal: {
+    titulo: "helios-cli — -zsh — 80x24",
+    linea1: "npm install @helios/core",
+    linea2: "✔ Módulos centrales iniciados",
+    linea3: "✔ Arquitectura_SaaS cargada",
+    linea4: "Esperando comando del usuario...",
+  },
+  servicios: {
+    titulo: "El Protocolo Helios",
+    subtitulo: "Tres pilares de la infraestructura digital moderna.",
+    items: [
+      {
+        id: 1,
+        titulo: "Sistemas Notion",
+        desc: "No hacemos plantillas. Diseñamos sistemas operativos para tu lógica de negocio.",
+        etiqueta: "Flujo",
+      },
+      {
+        id: 2,
+        titulo: "Ingeniería SaaS",
+        desc: "De cero a lanzamiento. Arquitecturas escalables y multi-inquilino construidas en el edge.",
+        etiqueta: "Escala",
+      },
+      {
+        id: 3,
+        titulo: "Software a Medida",
+        desc: "Cuando lo comercial no basta. Herramientas personalizadas para problemas únicos.",
+        etiqueta: "Custom",
+      },
+    ],
+  },
+  contacto: {
+    titulo: "Contáctanos",
+    subtitulo: "Construyamos algo extraordinario juntos.",
+    nombre: "Nombre",
+    correo: "Correo electrónico",
+    mensaje: "Mensaje",
+    enviar: "Enviar Mensaje",
+    whatsapp: "Hablar por WhatsApp",
+    placeholderNombre: "Juan Pérez",
+    placeholderCorreo: "juan@helios.com",
+    placeholderMensaje: "¿Cómo podemos ayudarte?",
+  },
+  pie: {
+    descripcion:
+      "Construyendo el futuro de la infraestructura de software. Minimalista, rápido y diseñado para equipos que escalan.",
+    derechos:
+      "© 2024 AVA. Helios es mi marca registrada. Todos los derechos reservados.",
+  },
+};
+
+// ─────────────────────────────────────────────
+// Componente: Escritura animada
+// ─────────────────────────────────────────────
+const EscritorAnimado = ({ texto, retraso = 30, alCompletar }) => {
+  const [textoActual, setTextoActual] = useState("");
+  const [indice, setIndice] = useState(0);
 
   useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setCurrentText((prev) => prev + text[currentIndex]);
-        setCurrentIndex((prev) => prev + 1);
-      }, delay);
-      return () => clearTimeout(timeout);
-    } else if (onComplete) {
-      onComplete();
+    if (indice < texto.length) {
+      const temporizador = setTimeout(() => {
+        setTextoActual((prev) => prev + texto[indice]);
+        setIndice((prev) => prev + 1);
+      }, retraso);
+      return () => clearTimeout(temporizador);
+    } else if (alCompletar) {
+      alCompletar();
     }
-  }, [currentIndex, delay, text, onComplete]);
+  }, [indice, retraso, texto, alCompletar]);
 
-  return <span>{currentText}</span>;
+  return <span>{textoActual}</span>;
 };
 
-const LiveTerminal = ({ textData }) => {
-  const [activeLineIndex, setActiveLineIndex] = useState(0);
+// ─────────────────────────────────────────────
+// Componente: Terminal animada
+// ─────────────────────────────────────────────
+const TerminalViva = ({ datosTerminal, paleta }) => {
+  const [indiceActivo, setIndiceActivo] = useState(0);
 
   useEffect(() => {
-    setActiveLineIndex(0);
-  }, [textData]);
+    setIndiceActivo(0);
+  }, [datosTerminal]);
 
-  const handleLineComplete = () => {
-    if (activeLineIndex < 3) setActiveLineIndex((prev) => prev + 1);
+  const manejarLineaCompleta = () => {
+    if (indiceActivo < 3) setIndiceActivo((prev) => prev + 1);
   };
 
-  const allLines = [
-    textData.line1,
-    textData.line2,
-    textData.line3,
-    textData.line4,
+  const todasLasLineas = [
+    datosTerminal.linea1,
+    datosTerminal.linea2,
+    datosTerminal.linea3,
+    datosTerminal.linea4,
   ];
 
   return (
     <div className="w-full max-w-lg mx-auto transform hover:scale-[1.01] transition-transform duration-500">
-      <div className="rounded-xl overflow-hidden bg-[#0F1115] border border-white/10 shadow-2xl shadow-blue-900/10 backdrop-blur-xl">
-        <div className="bg-[#1C1C1F] px-4 py-3 flex items-center justify-between border-b border-white/5">
+      <div
+        className="rounded-xl overflow-hidden border shadow-2xl shadow-blue-900/10 backdrop-blur-xl"
+        style={{
+          backgroundColor: paleta.terminalbg,
+          borderColor: "rgba(255,255,255,0.08)",
+        }}
+      >
+        {/* Barra de título */}
+        <div
+          className="px-4 py-3 flex items-center justify-between border-b"
+          style={{
+            backgroundColor: paleta.terminalHeader,
+            borderColor: "rgba(255,255,255,0.05)",
+          }}
+        >
           <div className="flex gap-2">
             <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
             <div className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
             <div className="w-3 h-3 rounded-full bg-[#28C840]" />
           </div>
           <div className="text-[10px] text-gray-500 font-medium font-mono flex items-center gap-1">
-            <Command size={10} /> {textData.title}
+            <Command size={10} /> {datosTerminal.titulo}
           </div>
-          <div className="w-10"></div>
+          <div className="w-10" />
         </div>
-        <div className="p-6 font-mono text-[13px] leading-relaxed h-64 text-slate-300">
-          {allLines.map((line, index) => (
+
+        {/* Contenido */}
+        <div
+          className={`p-6 font-mono text-[13px] leading-relaxed h-64 ${paleta.terminalTexto}`}
+        >
+          {todasLasLineas.map((linea, idx) => (
             <div
-              key={index}
-              className={`mb-2 ${index > activeLineIndex ? "hidden" : "flex"}`}
+              key={idx}
+              className={`mb-2 ${idx > indiceActivo ? "hidden" : "flex"}`}
             >
               <span className="text-emerald-400 mr-3 font-bold">➜</span>
               <span>
-                {index < activeLineIndex ? (
-                  line
+                {idx < indiceActivo ? (
+                  linea
                 ) : (
-                  <Typewriter
-                    text={line}
-                    onComplete={handleLineComplete}
-                    delay={25}
+                  <EscritorAnimado
+                    texto={linea}
+                    alCompletar={manejarLineaCompleta}
+                    retraso={25}
                   />
                 )}
               </span>
             </div>
           ))}
-          <div className={`mt-2 ${activeLineIndex === 3 ? "block" : "hidden"}`}>
-            <span className="inline-block w-2.5 h-5 bg-slate-500 align-middle animate-pulse"></span>
+          <div className={`mt-2 ${indiceActivo === 3 ? "block" : "hidden"}`}>
+            <span className="inline-block w-2.5 h-5 bg-slate-500 align-middle animate-pulse" />
           </div>
         </div>
       </div>
-      <div className="absolute -inset-0.5 bg-gradient-to-t from-blue-500/20 to-purple-500/20 rounded-xl blur-2xl -z-10 opacity-40"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-t from-blue-500/20 to-purple-500/20 rounded-xl blur-2xl -z-10 opacity-40" />
     </div>
   );
 };
 
+// ─────────────────────────────────────────────
+// Componente Principal
+// ─────────────────────────────────────────────
 export default function App() {
-  const [lang, setLang] = useState("en");
-  const [scrolled, setScrolled] = useState(false);
-  const [page, setPage] = useState("home");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const temaActivo = useSystemTheme(); // "dark" | "light"
+  const paleta = temas[temaActivo];
 
-  const t = translations[lang];
+  const [desplazado, setDesplazado] = useState(false);
+  const [pagina, setPagina] = useState("inicio");
+  const [posRaton, setPosRaton] = useState({ x: 0, y: 0 });
+
+  const t = contenido;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("mousemove", handleMouseMove);
+    const manejarScroll = () => setDesplazado(window.scrollY > 20);
+    const manejarRaton = (e) => setPosRaton({ x: e.clientX, y: e.clientY });
+    window.addEventListener("scroll", manejarScroll);
+    window.addEventListener("mousemove", manejarRaton);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", manejarScroll);
+      window.removeEventListener("mousemove", manejarRaton);
     };
   }, []);
 
-  const toggleLang = () => setLang((prev) => (prev === "en" ? "es" : "en"));
-  const bgGradient = `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(56, 189, 248, 0.08) 0%, rgba(0, 0, 0, 0) 50%)`;
+  const degradadoCursor =
+    temaActivo === "dark"
+      ? `radial-gradient(circle at ${posRaton.x}px ${posRaton.y}px, rgba(56,189,248,0.08) 0%, rgba(0,0,0,0) 50%)`
+      : `radial-gradient(circle at ${posRaton.x}px ${posRaton.y}px, rgba(56,189,248,0.05) 0%, rgba(244,245,247,0) 50%)`;
 
   return (
-    <div className="min-h-screen bg-[#08090A] text-slate-200 selection:bg-blue-500/30 font-sans antialiased overflow-x-hidden">
+    <div
+      className={`min-h-screen ${paleta.texto} ${paleta.selection} font-sans antialiased overflow-x-hidden transition-colors duration-300`}
+      style={{ backgroundColor: paleta.fondo }}
+    >
+      {/* Efecto cursor */}
       <div
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300"
-        style={{ background: bgGradient }}
-      ></div>
-      <div className="fixed inset-0 z-0 opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay"></div>
+        style={{ background: degradadoCursor }}
+      />
 
-      {/* Navbar */}
+      {/* Textura de ruido */}
+      <div
+        className={`fixed inset-0 z-0 ${paleta.noise} pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay`}
+      />
+
+      {/* ── Barra de Navegación ── */}
       <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-[#08090A]/80 backdrop-blur-md border-b border-white/5" : "bg-transparent"}`}
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+          desplazado
+            ? `backdrop-blur-md border-b ${paleta.borde}`
+            : "bg-transparent"
+        }`}
+        style={desplazado ? { backgroundColor: paleta.fondoNav } : {}}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
           <div
-            onClick={() => setPage("home")}
+            onClick={() => setPagina("inicio")}
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="relative flex items-center justify-center w-9 h-9">
               <img
                 src={logo}
-                alt="Helios Logo"
+                alt="Logo Helios"
                 className="w-full h-full object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
               />
             </div>
-            <span className="font-semibold tracking-tight text-white">
-              {t.nav.brand}
+            <span
+              className={`font-semibold tracking-tight ${paleta.textoBlanco}`}
+            >
+              {t.nav.marca}
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+          {/* Menú */}
+          <div
+            className={`hidden md:flex items-center gap-6 text-sm font-medium ${paleta.textoMuted}`}
+          >
             <button
-              onClick={() => setPage("home")}
-              className="hover:text-white transition-colors"
+              onClick={() => setPagina("inicio")}
+              className={`hover:${paleta.textoBlanco} transition-colors`}
             >
-              Overview
+              {t.nav.inicio}
             </button>
             <button
-              onClick={() => setPage("services")}
-              className="hover:text-white transition-colors"
+              onClick={() => setPagina("servicios")}
+              className={`hover:${paleta.textoBlanco} transition-colors`}
             >
-              Capabilities
+              {t.nav.servicios}
             </button>
-            <div className="w-px h-4 bg-white/10 mx-2"></div>
-            <button
-              onClick={toggleLang}
-              className="text-xs font-mono px-2 py-1 rounded hover:bg-white/5 transition-colors"
+
+            {/* Indicador de tema (solo visual, no toggle manual) */}
+            <div className={`w-px h-4 ${paleta.divider} mx-2`} />
+            <span
+              className={`text-xs font-mono px-2 py-1 rounded ${paleta.inputBg} ${paleta.textoExtra} flex items-center gap-1`}
             >
-              {t.nav.lang}
-            </button>
+              <Monitor size={12} />
+              {temaActivo === "dark" ? "Oscuro" : "Claro"}
+            </span>
+
             <button
-              onClick={() => setPage("contact")}
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/5 px-4 py-1.5 rounded-full text-xs font-medium transition-all group"
+              onClick={() => setPagina("contacto")}
+              className={`flex items-center gap-2 ${paleta.inputBg} hover:bg-white/10 ${paleta.textoBlanco} border ${paleta.borde} px-4 py-1.5 rounded-full text-xs font-medium transition-all group`}
             >
-              {t.nav.contact}
+              {t.nav.contacto}
               <ChevronRight
                 size={14}
                 className="opacity-50 group-hover:translate-x-0.5 transition-transform"
@@ -345,154 +404,199 @@ export default function App() {
         </div>
       </nav>
 
+      {/* ── Contenido Principal ── */}
       <main className="relative z-10 pt-32 pb-20 px-6">
-        {page === "home" && (
+        {/* ── Página de Inicio ── */}
+        {pagina === "inicio" && (
           <>
-            {/* Hero */}
+            {/* Sección Hero */}
             <section className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center mb-40">
               <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-blue-300 tracking-wide backdrop-blur-sm">
-                  <Zap size={12} className="fill-blue-300" /> {t.hero.badge}
+                {/* Insignia */}
+                <div
+                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[11px] font-medium ${paleta.badgeBg} ${paleta.badgeTexto} tracking-wide backdrop-blur-sm ${paleta.borde}`}
+                >
+                  <Zap size={12} className="fill-blue-400" /> {t.hero.insignia}
                 </div>
-                <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter text-white leading-[1.05]">
-                  {t.hero.title} <br />
+
+                {/* Título */}
+                <h1
+                  className={`text-5xl md:text-7xl font-semibold tracking-tighter ${paleta.textoBlanco} leading-[1.05]`}
+                >
+                  {t.hero.titulo} <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-white">
-                    {t.hero.title2}
+                    {t.hero.titulo2}
                   </span>
                 </h1>
-                <p className="text-lg text-slate-400 max-w-lg leading-relaxed font-light">
-                  {t.hero.description}
+
+                {/* Descripción */}
+                <p
+                  className={`text-lg ${paleta.textoMuted} max-w-lg leading-relaxed font-light`}
+                >
+                  {t.hero.descripcion}
                 </p>
+
+                {/* Botones CTA */}
                 <div className="flex flex-wrap gap-4 pt-4">
                   <button
-                    onClick={() => setPage("services")}
+                    onClick={() => setPagina("servicios")}
                     className="h-10 px-6 rounded-full bg-[#5E6AD2] hover:bg-[#6F7BF7] text-white font-medium text-sm transition-all shadow-[0_0_20px_rgba(94,106,210,0.4)] flex items-center gap-2"
                   >
-                    {t.hero.cta_primary} <ArrowRight size={16} />
+                    {t.hero.cta_principal} <ArrowRight size={16} />
                   </button>
                   <button
-                    onClick={() => setPage("contact")}
-                    className="h-10 px-6 rounded-full border border-white/10 hover:bg-white/5 text-white font-medium text-sm transition-all flex items-center gap-2"
+                    onClick={() => setPagina("contacto")}
+                    className={`h-10 px-6 rounded-full border ${paleta.borde} hover:${paleta.inputBg} ${paleta.textoBlanco} font-medium text-sm transition-all flex items-center gap-2`}
                   >
-                    <MessageSquare size={16} className="text-slate-400" />{" "}
-                    {t.hero.cta_secondary}
+                    <MessageSquare size={16} className={paleta.textoMuted} />{" "}
+                    {t.hero.cta_secundario}
                   </button>
                 </div>
               </div>
+
+              {/* Terminal */}
               <div className="relative animate-in fade-in slide-in-from-right duration-700">
-                <LiveTerminal textData={t.terminal} />
+                <TerminalViva datosTerminal={t.terminal} paleta={paleta} />
               </div>
             </section>
 
-            {/* Logo/Tech Section (Linear style social proof) */}
+            {/* Stack Tecnológico */}
             <section className="max-w-7xl mx-auto mb-40">
-              <p className="text-center text-xs font-mono text-slate-500 uppercase tracking-widest mb-10">
-                {t.tech_stack}
+              <p
+                className={`text-center text-xs font-mono ${paleta.textoExtra} uppercase tracking-widest mb-10`}
+              >
+                {t.stack}
               </p>
               <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="flex items-center gap-2">
-                  <Github size={24} />{" "}
-                  <span className="font-bold text-lg">GitHub</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Framer size={24} />{" "}
-                  <span className="font-bold text-lg">Framer</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DatabaseIcon size={24} />{" "}
-                  <span className="font-bold text-lg">Supabase</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Box size={24} />{" "}
-                  <span className="font-bold text-lg">Vercel</span>
-                </div>
+                {[
+                  { icono: <Github size={24} />, nombre: "GitHub" },
+                  { icono: <Framer size={24} />, nombre: "Framer" },
+                  { icono: <DatabaseIcon size={24} />, nombre: "Supabase" },
+                  { icono: <Box size={24} />, nombre: "Vercel" },
+                ].map(({ icono, nombre }) => (
+                  <div
+                    key={nombre}
+                    className={`flex items-center gap-2 ${paleta.textoBlanco}`}
+                  >
+                    {icono}
+                    <span className="font-bold text-lg">{nombre}</span>
+                  </div>
+                ))}
               </div>
             </section>
 
-            {/* Advanced Features (Linear Bento style) */}
+            {/* Características */}
             <section className="max-w-7xl mx-auto mb-40">
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Big Card */}
-                <div className="p-10 rounded-3xl bg-[#0F1115] border border-white/5 flex flex-col justify-end min-h-[400px] group relative overflow-hidden">
+                {/* Tarjeta Grande */}
+                <div
+                  className={`p-10 rounded-3xl border ${paleta.borde} flex flex-col justify-end min-h-[400px] group relative overflow-hidden`}
+                  style={{ backgroundColor: paleta.fondoTarjeta }}
+                >
                   <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity">
                     <MousePointer2 size={120} className="text-blue-500" />
                   </div>
                   <div className="relative z-10">
-                    <h3 className="text-3xl font-semibold text-white mb-4">
-                      {t.features.title}
+                    <h3
+                      className={`text-3xl font-semibold ${paleta.textoBlanco} mb-4`}
+                    >
+                      {t.caracteristicas.titulo}
                     </h3>
-                    <p className="text-slate-400 max-w-sm">
-                      {t.features.subtitle}
+                    <p className={`${paleta.textoMuted} max-w-sm`}>
+                      {t.caracteristicas.subtitulo}
                     </p>
                   </div>
                 </div>
-                {/* Small Grid */}
+
+                {/* Tarjetas Pequeñas */}
                 <div className="grid gap-6">
-                  <div className="p-8 rounded-3xl bg-[#0F1115] border border-white/5 flex items-start gap-6 group">
-                    <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
-                      <Layers size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-medium mb-1">
-                        {t.features.f1}
-                      </h4>
-                      <p className="text-sm text-slate-500">
-                        {t.features.f1_d}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="p-8 rounded-3xl bg-[#0F1115] border border-white/5 flex items-start gap-6 group">
-                    <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
-                      <Zap size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-medium mb-1">
-                        {t.features.f2}
-                      </h4>
-                      <p className="text-sm text-slate-500">
-                        {t.features.f2_d}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="p-8 rounded-3xl bg-[#0F1115] border border-white/5 flex items-start gap-6 group">
-                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                      <Shield size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-medium mb-1">
-                        {t.features.f3}
-                      </h4>
-                      <p className="text-sm text-slate-500">
-                        {t.features.f3_d}
-                      </p>
-                    </div>
-                  </div>
+                  {[
+                    {
+                      icono: <Layers size={24} />,
+                      colorBg: "bg-blue-500/10",
+                      colorBorde: "border-blue-500/20",
+                      colorTexto: "text-blue-400",
+                      titulo: t.caracteristicas.f1,
+                      desc: t.caracteristicas.f1_d,
+                    },
+                    {
+                      icono: <Zap size={24} />,
+                      colorBg: "bg-purple-500/10",
+                      colorBorde: "border-purple-500/20",
+                      colorTexto: "text-purple-400",
+                      titulo: t.caracteristicas.f2,
+                      desc: t.caracteristicas.f2_d,
+                    },
+                    {
+                      icono: <Shield size={24} />,
+                      colorBg: "bg-emerald-500/10",
+                      colorBorde: "border-emerald-500/20",
+                      colorTexto: "text-emerald-400",
+                      titulo: t.caracteristicas.f3,
+                      desc: t.caracteristicas.f3_d,
+                    },
+                  ].map(
+                    ({
+                      icono,
+                      colorBg,
+                      colorBorde,
+                      colorTexto,
+                      titulo,
+                      desc,
+                    }) => (
+                      <div
+                        key={titulo}
+                        className={`p-8 rounded-3xl border ${paleta.borde} flex items-start gap-6 group`}
+                        style={{ backgroundColor: paleta.fondoTarjeta }}
+                      >
+                        <div
+                          className={`p-3 rounded-xl ${colorBg} border ${colorBorde} ${colorTexto}`}
+                        >
+                          {icono}
+                        </div>
+                        <div>
+                          <h4
+                            className={`${paleta.textoBlanco} font-medium mb-1`}
+                          >
+                            {titulo}
+                          </h4>
+                          <p className={`text-sm ${paleta.textoExtra}`}>
+                            {desc}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             </section>
           </>
         )}
 
-        {page === "services" && (
+        {/* ── Página de Servicios ── */}
+        {pagina === "servicios" && (
           <section className="max-w-7xl mx-auto animate-in fade-in duration-500">
             <div className="mb-16 text-center">
-              <h2 className="text-4xl font-semibold tracking-tighter text-white mb-4">
-                {t.services.title}
+              <h2
+                className={`text-4xl font-semibold tracking-tighter ${paleta.textoBlanco} mb-4`}
+              >
+                {t.servicios.titulo}
               </h2>
-              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                {t.services.subtitle}
+              <p className={`${paleta.textoMuted} text-lg max-w-2xl mx-auto`}>
+                {t.servicios.subtitulo}
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
-              {t.services.items.map((item, idx) => (
+              {t.servicios.items.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="group p-8 rounded-2xl bg-[#14151A] border border-white/5 hover:border-white/10 transition-all overflow-hidden relative"
+                  className={`group p-8 rounded-2xl border ${paleta.borde} hover:border-white/10 transition-all overflow-hidden relative`}
+                  style={{ backgroundColor: paleta.fondoTarjeta2 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="mb-6 flex justify-between">
-                      <div className="p-3 rounded-lg bg-white/5">
+                      <div className={`p-3 rounded-lg ${paleta.iconBg}`}>
                         {idx === 0 ? (
                           <LayoutTemplate size={24} className="text-blue-400" />
                         ) : idx === 1 ? (
@@ -501,16 +605,24 @@ export default function App() {
                           <Code size={24} className="text-emerald-400" />
                         )}
                       </div>
-                      <span className="text-[10px] font-mono text-slate-500 border border-white/5 px-2 py-1 rounded">
-                        {item.tag}
+                      <span
+                        className={`text-[10px] font-mono ${paleta.tagTexto} border ${paleta.borde} px-2 py-1 rounded`}
+                      >
+                        {item.etiqueta}
                       </span>
                     </div>
-                    <h3 className="text-xl font-medium text-white mb-3">
-                      {item.title}
+                    <h3
+                      className={`text-xl font-medium ${paleta.textoBlanco} mb-3`}
+                    >
+                      {item.titulo}
                     </h3>
-                    <p className="text-sm text-slate-400 mb-6">{item.desc}</p>
-                    <div className="mt-auto flex items-center text-xs text-slate-500 font-medium group-hover:text-blue-400 transition-colors">
-                      Learn more <ChevronRight size={12} className="ml-1" />
+                    <p className={`text-sm ${paleta.textoMuted} mb-6`}>
+                      {item.desc}
+                    </p>
+                    <div
+                      className={`mt-auto flex items-center text-xs ${paleta.textoExtra} font-medium group-hover:text-blue-400 transition-colors`}
+                    >
+                      Saber más <ChevronRight size={12} className="ml-1" />
                     </div>
                   </div>
                 </div>
@@ -519,58 +631,75 @@ export default function App() {
           </section>
         )}
 
-        {page === "contact" && (
+        {/* ── Página de Contacto ── */}
+        {pagina === "contacto" && (
           <section className="max-w-4xl mx-auto animate-in fade-in duration-500">
             <div className="mb-12 text-center">
-              <h2 className="text-4xl font-semibold tracking-tighter text-white mb-4">
-                {t.contact.title}
+              <h2
+                className={`text-4xl font-semibold tracking-tighter ${paleta.textoBlanco} mb-4`}
+              >
+                {t.contacto.titulo}
               </h2>
-              <p className="text-slate-400">{t.contact.subtitle}</p>
+              <p className={paleta.textoMuted}>{t.contacto.subtitulo}</p>
             </div>
-            <div className="grid md:grid-cols-1 gap-12 bg-[#14151A] p-8 md:p-12 rounded-2xl border border-white/5">
+            <div
+              className={`grid md:grid-cols-1 gap-12 p-8 md:p-12 rounded-2xl border ${paleta.borde}`}
+              style={{ backgroundColor: paleta.fondoTarjeta2 }}
+            >
               <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid md:grid-cols-2 gap-6">
+                  {/* Nombre */}
                   <div className="space-y-2">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      {t.contact.name}
+                    <label
+                      className={`text-xs font-medium ${paleta.textoExtra} uppercase tracking-wider`}
+                    >
+                      {t.contacto.nombre}
                     </label>
                     <input
                       type="text"
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors"
-                      placeholder="John Doe"
+                      className={`w-full ${paleta.inputBg} border ${paleta.bordeInput} rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors ${paleta.texto}`}
+                      placeholder={t.contacto.placeholderNombre}
                     />
                   </div>
+                  {/* Correo */}
                   <div className="space-y-2">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      {t.contact.email}
+                    <label
+                      className={`text-xs font-medium ${paleta.textoExtra} uppercase tracking-wider`}
+                    >
+                      {t.contacto.correo}
                     </label>
                     <input
                       type="email"
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors"
-                      placeholder="john@helios.com"
+                      className={`w-full ${paleta.inputBg} border ${paleta.bordeInput} rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors ${paleta.texto}`}
+                      placeholder={t.contacto.placeholderCorreo}
                     />
                   </div>
                 </div>
+                {/* Mensaje */}
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-                    {t.contact.message}
+                  <label
+                    className={`text-xs font-medium ${paleta.textoExtra} uppercase tracking-wider`}
+                  >
+                    {t.contacto.mensaje}
                   </label>
                   <textarea
                     rows="4"
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors"
-                    placeholder="How can we help?"
-                  ></textarea>
+                    className={`w-full ${paleta.inputBg} border ${paleta.bordeInput} rounded-lg px-4 py-3 text-sm focus:border-blue-500 outline-none transition-colors ${paleta.texto}`}
+                    placeholder={t.contacto.placeholderMensaje}
+                  />
                 </div>
+                {/* Botones */}
                 <div className="flex flex-col md:flex-row gap-4 pt-4">
                   <button className="flex-1 bg-white text-black py-3 rounded-lg font-bold hover:bg-blue-400 hover:text-white transition-all flex items-center justify-center gap-2">
-                    <Send size={18} /> {t.contact.send}
+                    <Send size={18} /> {t.contacto.enviar}
                   </button>
                   <a
                     href="https://wa.me/+50375910769"
                     target="_blank"
+                    rel="noreferrer"
                     className="flex-1 bg-[#25D366] text-white py-3 rounded-lg font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
                   >
-                    <Phone size={18} /> {t.contact.whatsapp}
+                    <Phone size={18} /> {t.contacto.whatsapp}
                   </a>
                 </div>
               </form>
@@ -579,45 +708,49 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="py-20 border-t border-white/5 bg-[#08090A]">
+      {/* ── Pie de Página ── */}
+      <footer
+        className={`py-20 border-t ${paleta.borde}`}
+        style={{ backgroundColor: paleta.fondo }}
+      >
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8">
                 <img
                   src={logo}
-                  alt="Helios Logo"
+                  alt="Logo Helios"
                   className="w-full h-full object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]"
                 />
               </div>
-
-              <span className="text-lg font-semibold tracking-tight text-white">
-                {t.nav.brand}
+              <span
+                className={`text-lg font-semibold tracking-tight ${paleta.textoBlanco}`}
+              >
+                {t.nav.marca}
               </span>
             </div>
-
-            <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
-              Building the future of software infrastructure. Minimalist, fast,
-              and engineered for teams that scale.
+            <p
+              className={`text-sm ${paleta.textoMuted} max-w-xs leading-relaxed`}
+            >
+              {t.pie.descripcion}
             </p>
           </div>
           <div className="flex flex-col md:items-end gap-2">
-            <p className="text-xs text-slate-600 font-mono">
-              {t.footer.rights}
+            <p className={`text-xs ${paleta.textoPie} font-mono`}>
+              {t.pie.derechos}
             </p>
-            <div className="flex gap-4 opacity-50">
+            <div className={`flex gap-4 opacity-50 ${paleta.textoBlanco}`}>
               <Github
                 size={18}
-                className="cursor-pointer hover:text-white transition-colors"
+                className="cursor-pointer hover:text-blue-400 transition-colors"
               />
               <MessageSquare
                 size={18}
-                className="cursor-pointer hover:text-white transition-colors"
+                className="cursor-pointer hover:text-blue-400 transition-colors"
               />
               <Globe
                 size={18}
-                className="cursor-pointer hover:text-white transition-colors"
+                className="cursor-pointer hover:text-blue-400 transition-colors"
               />
             </div>
           </div>
